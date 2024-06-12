@@ -20,6 +20,3 @@ DWG/DXF File Renamer is a Python-based GUI application that helps you easily org
 
 ### Example:
 If you have a DWG file named `48019-0000-00.dwg` and a DXF file named `example.dxf` in different subdirectories and you specify the prefix `PNZC`, the files will be renamed to `PNZC-48019-0000-00.dwg` and `PNZC-example.dxf`.
-
-### License:
-This project is licensed under the MIT License.
