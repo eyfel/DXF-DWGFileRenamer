@@ -1,49 +1,46 @@
-import os
-import glob
-import tkinter as tk
-from tkinter import filedialog, messagebox
+Imports SolidWorks.Interop.sldworks
+Imports SolidWorks.Interop.swconst
+Imports System.Runtime.InteropServices
 
-def rename_files(prefix, folder_path):
-    for root, dirs, files in os.walk(folder_path):
-        for extension in ("*.dwg", "*.dxf"):
-            for file_path in glob.glob(os.path.join(root, extension)):
-                file_dir, file_name = os.path.split(file_path)
-                new_file_name = prefix + "-" + file_name
-                new_file_path = os.path.join(file_dir, new_file_name)
-                os.rename(file_path, new_file_path)
+Module Module1
+    Sub Main()
+        ' SolidWorks application instance
+        Dim swApp As SldWorks = Nothing
+        swApp = CType(Marshal.GetActiveObject("SldWorks.Application"), SldWorks)
 
-def select_folder():
-    folder_path = filedialog.askdirectory()
-    if folder_path:
-        folder_entry.delete(0, tk.END)
-        folder_entry.insert(0, folder_path)
+        ' Open file dialog to select a .slddrw file
+        Dim openFileDialog As New OpenFileDialog()
+        openFileDialog.Filter = "SolidWorks Drawing Files (*.slddrw)|*.slddrw"
+        If openFileDialog.ShowDialog() = DialogResult.OK Then
+            Dim filePath As String = openFileDialog.FileName
 
-def rename():
-    prefix = prefix_entry.get()
-    folder_path = folder_entry.get()
+            ' Open the selected drawing document
+            Dim swDoc As ModelDoc2 = swApp.OpenDoc(filePath, swDocumentTypes_e.swDocDRAWING)
+            If swDoc Is Nothing Then
+                Console.WriteLine("Dosya açılamadı.")
+                Return
+            End If
 
-    if not prefix or not folder_path:
-        messagebox.showerror("Error", "Both prefix and folder must be provided")
-        return
+            ' Cast to drawing document
+            Dim swDrawing As DrawingDoc = CType(swDoc, DrawingDoc)
+            If swDrawing Is Nothing Then
+                Console.WriteLine("Geçersiz bir .slddrw dosyası.")
+                Return
+            End If
 
-    try:
-        rename_files(prefix, folder_path)
-        messagebox.showinfo("Success", "Files renamed successfully")
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occurred: {e}")
+            ' Get the number of views
+            Dim viewCount As Integer = swDrawing.GetViewCount()
 
-root = tk.Tk()
-root.title("DWG/DXF File Renamer")
+            ' Output the view count
+            Console.WriteLine("Görünüm Sayısı: " & viewCount)
 
-tk.Label(root, text="Prefix:").grid(row=0, column=0, padx=10, pady=10)
-prefix_entry = tk.Entry(root)
-prefix_entry.grid(row=0, column=1, padx=10, pady=10)
+            ' Close the document
+            swApp.CloseDoc(filePath)
+        Else
+            Console.WriteLine("Dosya seçimi iptal edildi.")
+        End If
 
-tk.Label(root, text="Folder:").grid(row=1, column=0, padx=10, pady=10)
-folder_entry = tk.Entry(root)
-folder_entry.grid(row=1, column=1, padx=10, pady=10)
-
-tk.Button(root, text="Browse", command=select_folder).grid(row=1, column=2, padx=10, pady=10)
-tk.Button(root, text="Rename", command=rename).grid(row=2, column=0, columnspan=3, padx=10, pady=10)
-
-root.mainloop()
+        Console.WriteLine("Program sona erdi. Çıkmak için bir tuşa basın...")
+        Console.ReadKey()
+    End Sub
+End Module
