@@ -1,7 +1,6 @@
 ## DWG/DXF File Renamer
 
-DWG/DXF File Renamer is a Python-based GUI application that helps you easily organize your DWG and DXF files. By specifying a prefix and selecting a directory, this tool will rename all DWG and DXF files in that directory and its subdirectories by adding the given prefix at the beginning of each file name. This is especially useful for engineers, architects, and designers who need to maintain a consistent naming convention for their project files.
-
+DWG/DXF File Renamer is a Python-based GUI application that helps you easily organize your DWG and DXF files. By specifying a prefix and selecting a directory, this tool will rename all DWG and DXF files in that directory and its subdirectories by adding the given prefix at the beginning of each file name. This is especially useful for engineers, architects, and designers who need to maintain a consistent naming convention for their project files. You can change any type file doesn't have to be dwg/dxf just little edit.
 ### Features:
 - Simple and user-friendly interface.
 - Allows you to specify any prefix to be added to the DWG and DXF files.
