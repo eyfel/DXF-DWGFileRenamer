@@ -3,16 +3,19 @@ import glob
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
-def rename_files(prefix, folder_path, start_counter):
+def rename_files(prefix, folder_path, start_counter=None):
     counter = start_counter
     for root, dirs, files in os.walk(folder_path):
         for extension in ("*.dwg", "*.dxf"):
             for file_path in glob.glob(os.path.join(root, extension)):
                 file_dir, file_name = os.path.split(file_path)
-                new_file_name = f"{prefix}-{counter:03d}-{file_name}"
+                if counter is not None:
+                    new_file_name = f"{prefix}-{counter:03d}-{file_name}"
+                    counter += 1
+                else:
+                    new_file_name = f"{prefix}-{file_name}"
                 new_file_path = os.path.join(file_dir, new_file_name)
                 os.rename(file_path, new_file_path)
-                counter += 1
 
 def select_folder():
     folder_path = filedialog.askdirectory()
@@ -25,12 +28,12 @@ def rename():
     folder_path = folder_entry.get()
     start_counter_str = counter_entry.get()
 
-    if not prefix or not folder_path or not start_counter_str:
-        messagebox.showerror("Error", "All fields must be provided")
+    if not prefix or not folder_path:
+        messagebox.showerror("Error", "Prefix and folder must be provided")
         return
 
     try:
-        start_counter = int(start_counter_str)
+        start_counter = int(start_counter_str) if start_counter_str else None
         rename_files(prefix, folder_path, start_counter)
         messagebox.showinfo("Success", "Files renamed successfully")
     except ValueError:
@@ -45,7 +48,7 @@ tk.Label(root, text="Prefix:").grid(row=0, column=0, padx=10, pady=10)
 prefix_entry = tk.Entry(root)
 prefix_entry.grid(row=0, column=1, padx=10, pady=10)
 
-tk.Label(root, text="Start Counter:").grid(row=1, column=0, padx=10, pady=10)
+tk.Label(root, text="Start Counter (optional):").grid(row=1, column=0, padx=10, pady=10)
 counter_entry = tk.Entry(root)
 counter_entry.grid(row=1, column=1, padx=10, pady=10)
 
